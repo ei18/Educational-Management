@@ -1,4 +1,5 @@
 package com.riwi.educationalManagement.utils.enums;
 
-public class Role {
+public enum Role {
+    STUDENT, INSTRUCTOR
 }

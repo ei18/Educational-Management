@@ -1,4 +1,4 @@
 package com.riwi.educationalManagement.domain.repositories;
 
-public class SubmissionRepository {
+public interface SubmissionRepository {
 }
