@@ -1,4 +1,8 @@
 package com.riwi.educationalManagement.utils.exception;
 
-public class BadRequestException {
+public class BadRequestException extends RuntimeException {
+    
+    public BadRequestException(String message){
+            super(message);
+    }
 }

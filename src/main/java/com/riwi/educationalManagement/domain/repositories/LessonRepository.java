@@ -1,4 +1,10 @@
 package com.riwi.educationalManagement.domain.repositories;
 
-public interface LessonRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.riwi.educationalManagement.domain.entities.Lesson;
+
+@Repository
+public interface LessonRepository extends JpaRepository<Lesson, Long>{
 }
