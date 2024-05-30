@@ -22,7 +22,6 @@ public class UserRequest {
     private String email;
     @Size(min = 1, max = 100, message = "The full name must have a maximum of 100 characters.")
     private String fullName;
-    @NotBlank(message = "Role is required")
     private Role role;
     private Long enrollmentId;
     private Long courseId;
