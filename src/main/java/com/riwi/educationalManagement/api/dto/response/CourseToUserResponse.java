@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompleteLessonInformation {
+public class CourseToUserResponse {
     private Long id;
-    private String lessonTitle;
-    private String content;
-    private CourseResponse course;
+    private String courseName;
+    private String description;
     private UserInfoResponse userInfoResponse;
 }

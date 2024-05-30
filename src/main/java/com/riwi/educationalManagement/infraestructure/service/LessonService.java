@@ -1,15 +1,15 @@
 package com.riwi.educationalManagement.infraestructure.service;
 
-import org.springframework.beans.BeanUtils;
+import com.riwi.educationalManagement.api.dto.response.CourseToUserResponse;
+import com.riwi.educationalManagement.api.dto.response.UserInfoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.riwi.educationalManagement.api.dto.request.LessonRequest;
-import com.riwi.educationalManagement.api.dto.response.CompleteLessonInformation;
-import com.riwi.educationalManagement.api.dto.response.CourseResponse;
-import com.riwi.educationalManagement.api.dto.response.LessonResponse;
-import com.riwi.educationalManagement.api.dto.response.UserInfoResponse;
+import com.riwi.educationalManagement.api.dto.response.CompleteLessonInformationResponse;
+import com.riwi.educationalManagement.domain.entities.Course;
 import com.riwi.educationalManagement.domain.entities.Lesson;
 import com.riwi.educationalManagement.domain.repositories.CourseRepository;
 import com.riwi.educationalManagement.domain.repositories.LessonRepository;
@@ -32,42 +32,63 @@ public class LessonService implements ILessonService{
     private final CourseRepository courseRepository;
 
     @Override
-    public LessonResponse create(LessonRequest request) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'create'");
+    public CompleteLessonInformationResponse create(LessonRequest request) {
+        Course course = this.courseRepository.findById(request.getCourseId())
+        .orElseThrow(()-> new BadRequestException("Course"));
+
+        Lesson lesson = this.requestToEntity(request);
+        lesson.setCourse(course);                
+        
+        return this.entityToResponse(this.lessonRepository.save(lesson));
     }
 
     @Override
-    public LessonResponse get(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getById'");
+    public CompleteLessonInformationResponse get(Long id) {
+        return this.entityToResponse(this.find(id));
     }
 
     @Override
-    public Page<LessonResponse> getAll(int page, int size) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAll'");
+    public Page<CompleteLessonInformationResponse> getAll(int page, int size) {
+        if (page < 0)
+            page = 0;
+
+        PageRequest pagination = PageRequest.of(page, size);
+
+        return this.lessonRepository.findAll(pagination)
+            .map(this::entityToResponse);
     }
 
     @Override
-    public LessonResponse update(LessonRequest request, Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    public CompleteLessonInformationResponse update(LessonRequest request, Long id) {
+        Lesson lesson = this.find(id);
+        Lesson lessonUpdate = this.requestToEntity(request);
+        lessonUpdate.setId(id);
+
+        return this.entityToResponse(this.lessonRepository.save(lessonUpdate));
     }
 
     @Override
     public void delete(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        this.lessonRepository.delete(this.find(id));
     }
 
-    private CompleteLessonInformation entityToResponse(CompleteLessonInformation entity){
+    private CompleteLessonInformationResponse entityToResponse(Lesson entity){
 
-        return CompleteLessonInformation.builder()
+        return CompleteLessonInformationResponse.builder()
                 .id(entity.getId())
                 .lessonTitle(entity.getLessonTitle())
                 .content(entity.getContent())
-                .
+                .course(CourseToUserResponse.builder()
+                        .courseName(entity.getCourse().getCourseName())
+                        .courseName(entity.getCourse().getDescription())
+                        .userInfoResponse(UserInfoResponse.builder()
+                                .id(entity.getCourse().getUser().getId())
+                                .username(entity.getCourse().getUser().getUsername())
+                                .email(entity.getCourse().getUser().getEmail())
+                                .fullName(entity.getCourse().getUser().getFullName())
+                                .role(entity.getCourse().getUser().getRole())
+                                .build())
+                        .build())
                 .build();
     }
 
